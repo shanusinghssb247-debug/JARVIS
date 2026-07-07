@@ -6,7 +6,7 @@ st.set_page_config(page_title="Shanu's AI Tool", page_icon="🚀", layout="cente
 
 # Title and header
 st.title("🚀 POWERFUL AI MADE BY SHANU")
-st.write("Welcome! Type your question below and see the power of custom AI.")
+st.write("Welcome! Powered by Gemini Pro for heavy-duty brainpower.")
 
 # Fetch your secret API key safely
 api_key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
@@ -23,10 +23,10 @@ else:
     # Action Button
     if st.button("Generate Answer ✨"):
         if user_prompt:
-            with st.spinner("Thinking..."):
+            with st.spinner("Gemini Pro is processing..."):
                 try:
-                    # Updated to the current standard model
-                    model = genai.GenerativeModel("gemini-2.0-flash")
+                    # Target the flagship Pro model
+                    model = genai.GenerativeModel("gemini-3.1-pro")
                     response = model.generate_content(user_prompt)
                     
                     st.success("Here is what I found:")
