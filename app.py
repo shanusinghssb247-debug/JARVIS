@@ -25,8 +25,8 @@ else:
         if user_prompt:
             with st.spinner("Thinking..."):
                 try:
-                    # Using standard stable gemini-1.5-flash model
-                    model = genai.GenerativeModel("gemini-1.5-flash")
+                    # Updated to the current standard model
+                    model = genai.GenerativeModel("gemini-2.0-flash")
                     response = model.generate_content(user_prompt)
                     
                     st.success("Here is what I found:")
