@@ -25,8 +25,8 @@ else:
         if user_prompt:
             with st.spinner("Gemini Pro is processing..."):
                 try:
-                    # Target the flagship Pro model
-                    model = genai.GenerativeModel("gemini-3.1-pro")
+                    # Updated to the official stable free-tier Pro model
+                    model = genai.GenerativeModel("gemini-2.5-pro")
                     response = model.generate_content(user_prompt)
                     
                     st.success("Here is what I found:")
