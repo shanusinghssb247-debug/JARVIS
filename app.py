@@ -1,37 +1,50 @@
 import streamlit as st
 from google import genai
+from google.genai import errors
 
-# Page styling
-st.set_page_config(page_title="Shanu's AI Tool", page_icon="🚀", layout="centered")
+# --- PAGE SETUP ---
+st.set_page_config(page_title="Gemini 2.5 Flash App", page_icon="⚡")
+st.title("⚡ My Gemini 2.5 Flash App")
 
-st.title("🚀 POWERFUL AI MADE BY SHANU")
-st.write("Welcome! Powered by the latest Gemini Flash engine.")
+# --- AUTHENTICATION & CLIENT SETUP ---
+# Fetch the API key from Streamlit secrets
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+except KeyError:
+    st.error("Error: 'GEMINI_API_KEY' not found in Streamlit secrets. Please check your .streamlit/secrets.toml file.")
+    st.stop()
 
-# Safely fetch your key from Streamlit Secrets
-api_key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
+# Initialize the NEW SDK client
+try:
+    client = genai.Client(api_key=api_key)
+except Exception as e:
+    st.error(f"Failed to initialize the Gemini client: {e}")
+    st.stop()
 
-if not api_key:
-    st.error("⚠️ API Key is missing! Please double-check your Streamlit Secrets setting.")
-else:
-    try:
-        # Initialize the modern Client explicitly passing the key
-        client = genai.Client(api_key=api_key)
-        
-        user_prompt = st.text_input("Ask me anything:", placeholder="Type your prompt here...")
-        
-        if st.button("Generate Answer ✨"):
-            if user_prompt:
-                with st.spinner("Thinking..."):
-                    # Utilizing stable 2.5-flash for free-tier compatibility
-                    response = client.models.generate_content(
-                        model="gemini-2.5-flash",
-                        contents=user_prompt
-                    )
-                    
-                    st.success("Here is what I found:")
-                    st.write(response.text)
-            else:
-                st.warning("Please type a question or prompt first!")
+# --- USER INTERFACE ---
+st.write("Type a prompt below to generate a response using the free-tier optimized `gemini-2.5-flash` model.")
+
+user_prompt = st.text_area("Enter your prompt:", placeholder="What can you do for me today?")
+
+if st.button("Generate Response"):
+    if not user_prompt.strip():
+        st.warning("Please enter a prompt before generating.")
+    else:
+        with st.spinner("Generating response..."):
+            try:
+                # --- API CALL USING NEW SYNTAX ---
+                response = client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=user_prompt
+                )
                 
-    except Exception as e:
-        st.error(f"Something went wrong during setup: {e}")
+                # Display the result
+                st.success("Success!")
+                st.write(response.text)
+
+            except errors.APIError as api_err:
+                # Catching specific API errors like 401, 404, or 429
+                st.error(f"API Error: {api_err.message} (Code: {api_err.code})")
+            except Exception as e:
+                # Catching any other unexpected errors
+                st.error(f"An unexpected error occurred: {e}")
