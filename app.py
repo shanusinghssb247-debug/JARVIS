@@ -4,28 +4,25 @@ from google import genai
 # Page styling
 st.set_page_config(page_title="Shanu's AI Tool", page_icon="🚀", layout="centered")
 
-# Title and header
 st.title("🚀 POWERFUL AI MADE BY SHANU")
-st.write("Welcome! Powered by the latest Gemini SDK.")
+st.write("Welcome! Powered by the latest Gemini Flash engine.")
 
-# Fetch your secret API key safely
+# Safely fetch your key from Streamlit Secrets
 api_key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
 
 if not api_key:
     st.error("⚠️ API Key is missing! Please double-check your Streamlit Secrets setting.")
 else:
     try:
-        # Initialize the modern Google GenAI Client designed for AQ. keys
+        # Initialize the modern Client explicitly passing the key
         client = genai.Client(api_key=api_key)
         
-        # User Input
         user_prompt = st.text_input("Ask me anything:", placeholder="Type your prompt here...")
         
-        # Action Button
         if st.button("Generate Answer ✨"):
             if user_prompt:
                 with st.spinner("Thinking..."):
-                    # Using gemini-2.5-flash for maximum free quota compliance
+                    # Utilizing stable 2.5-flash for free-tier compatibility
                     response = client.models.generate_content(
                         model="gemini-2.5-flash",
                         contents=user_prompt
